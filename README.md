@@ -67,7 +67,7 @@ journalctl -f > /opt/cybertrace/logs/journalctl/syslog.log &
 Make executable:
 chmod +x start_monitoring.sh
 ./start_monitoring.s 
-──────────────────────────────────────────────
+
 
 ]_H
 Part II: User Manual
@@ -95,11 +95,11 @@ Verify: hashdeep -r -a -k baseline.txt /etc
 GoAccess Report:
 goaccess /var/log/syslog -o /var/www/html/report.html --log-format=SYSLOG --real-time-html
 Access via Browser: http://localhost/report.html
-──────────────────────────────────────────────
+
 🛠 Troubleshooting
 •	Suricata not running: Ensure eth0 interface exists and Suricata is not blocked by firewall.
 •	tcpdump permission error: Run as sudo
 •	AVML issues: Ensure executable permission and kernel supports memory dumping.
 •	GoAccess blank page: Confirm syslog path and log format match.
 •	hashdeep mismatch: Verify correct baseline hash and unchanged files.
-──────────────────────────────────────────────
+
