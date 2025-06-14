@@ -1,0 +1,241 @@
+Shell Script Code for Cyber Trace: A Lightweight Breach Analysis Framework 
+#Tools_Installation sh
+#!/bin/bash
+echo "Starting Installation of Security Tools in Kali Linux..." # Update System echo " Updating system..."
+sudo apt update && sudo apt upgrade -y
+
+# Define the list of required tools
+TOOLS=("TCP Dump" "suricata" "journalctl" "nmap" "theHarvester" "avml" "foremost" "zap-cli" "goaccess")
+# Install each tool
+echo "Installing required security tools..." for tool in "${TOOLS[@]}"; do
+echo " Installing $tool..."case $tool in "avml") # AVML needs manual installation
+cd /usr/local/bin
+sudo wget https://github.com/microsoft/avml/releases/latest/download/avml sudo chmod +x /usr/local/bin/avml;;"zap-cli")
+# OWASP ZAP CLI requires pipx installation sudo apt install -y pipx
+pipx ensurepath pipx install zapcli
+;;
+*)
+#Default installation using apt sudo apt install -y $tool
+;;
+Esac Done
+echo " All security tools have been installed successfully!"
+# check tools #!/bin/bash
+echo "Checking for required security tools in Kali Linux..."
+
+"goaccess")
+# Flag to track missing tools MISSING_TOOLS=()
+# Check each tool
+for tool in "${TOOLS[@]}"; do
+ifcommand -v $tool &> /dev/null; then echo "$tool is installed." else
+echo "$tool is MISSING!"
+MISSING_TOOLS+=("$tool")
+fi done
+ 
+echo ""
+echo "The following tools are missing and need to be installed:" for missing in "${MISSING_TOOLS[@]}"; do
+echo "$missing" done
+echo " Runthe installation script to install missing tools." else echo " All required tools are installed!"
+fi
+
+#DatabreachFramework. sh
+#!/bin/bash
+# Define directories LOG_DIR="/var/log/security_analysis" REPORT_DIR="/var/log/security_analysis/reports" FOREMOST_DIR="$REPORT_DIR/recovered_files" mkdir -p $LOG_DIR $REPORT_DIR
+
+# Set time limits for continuous tools (in seconds) SURICATA_RUNTIME=30 TCP DUMP_RUNTIME=20
+MAP_TIMEOUT=60 # Timeout for vulnerability scanning
+echo "Starting Data Breach Investigation & Mitigation Framework..." ### *1 Start Intrusion Detection (Suricata)*
+echo " Running Suricata for Intrusion Detection
+(Limited to $SURICATA_RUNTIME seconds)..
+." sudo systemctl restart suricata
+sleep $SURICATA_RUNTIME sudo systemctl stop suricata
+### *2 Monitor Authentication Logs for Suspicious Activity* echo "Checking SSH & Authentication Logs..."
+sudo journalctl -u ssh -n 50 > $REPORT_DIR/auth_logs.txt
+grep "Failed password" /var/log/auth.log > $REPORT_DIR/failed_logins.txt
+
+### *3 Network Traffic Analysis (Limited to $TCP DUMP_RUNTIME seconds)* echo "Capturing Network Traffic..."
+sudo timeout $TCP DUMP_RUNTIME TCP Dump -i eth0 -c 100 -w
+$LOG_DIR/network_traffic.pcap
+
+### *4 Vulnerability & Exploit Scanning (Fixed Timeout)*
+echo "Running Vulnerability & Exploit Scans (Timeout: $NMAP_TIMEOUT seconds)..." sudo timeout $NMAP_TIMEOUT nmap -p 22,80,443 --script=vuln 127.0.0.1 >
+$REPORT_DIR/nmap_vuln_scan.txt
+sudo timeout $NMAP_TIMEOUT nikto -h 127.0.0.1
+>	$REPORT_DIR/nikto_scan.txt
+
+### *5 Memory Forensics & File Recovery* echo "Extracting Memory Dump..." sudo avml $LOG_DIR/memory_dump.lime
+echo "Running Foremost for File Recovery..."
+# If the foremost directory is not empty, clear it before running
+if [ -d "$FOREMOST_DIR" ] && [ "$(ls -A $FOREMOST_DIR 2>/dev/null)" ]; then echo
+ 
+"Foremost output directory is not empty. Clearing it..." sudo rm -rf $FOREMOST_DIR/*
+fi
+foremost -i$LOG_DIR/memory_dump.lime -o $FOREMOST_DIR
+### *6 Detecting Data Breach via File Hash Comparison (Fixed Missing File Errors)* echo "Running File Integrity Checks..."
+find /etc /var/www -type f 2>/dev/null | xargs hashdeep -r
+>	$REPORT_DIR/hash_baseline.txt sleep 5
+find /etc /var/www -type f 2>/dev/null | xargs hashdeep -r
+>	$REPORT_DIR/hash_current.txt diff $REPORT_DIR/hash_baseline.txt
+$REPORT_DIR/hash_current.txt >
+$REPORT_DIR/hash_diff.txt 2>/dev/null
+echo "Investigation Complete. Reports saved in $REPORT_DIR"
+
+/var/log/security_analysis/dashboard/generate_dashboard.sh  firefox
+/var/log/security_analysis/dashboard/index.html #Dashboard. Sh
+ #!/bin/bash
+LOG_DIR="/var/log/security_analysis/reports" mkdir -p "$LOG_DIR" "$LOG_DIR/recovered_files"
+# Get current datetime in syslog format CURRENT_DATE=$(date '+%b%d %H:%M:%S') # Simulate Auth Logs with current date
+echo -e "$CURRENT_DATE kali sshd[1234]: Failed password for invalid user root from 192.168.1.101 port 22 ssh2" > $LOG_DIR/auth_logs.txt
+echo -e "$CURRENT_DATE kali sshd[1240]:
+Accepted password for kali from 192.168.1.102 port 22 ssh2"
+>> $LOG_DIR/auth_logs.txt
+
+# Simulate Failed Logins
+grep "Failed password" $LOG_DIR/auth_logs.txt > $LOG_DIR/failed_logins.txt
+# Simulate Nmap Output
+cat <<EOF > $LOG_DIR/nmap_vuln_scan.txt PORT	STATE SERVICE 22/tcp open ssh
+|_sshv1: Server supports SSHv1
+|_vuln: CVE-2021-1234 Remote root possible EOF
+# Simulate Nikto Output
+cat <<EOF > $LOG_DIR/nikto_scan.txt
++ OSVDB-3092: /phpinfo.php: PHP is enabled. This could leak sensitive data.
++ OSVDB-877: /test/: Directory indexing is enabled. EOF
+
+# Simulate Hash Diff
+echo "> /etc/passwd has been modified on $CURRENT_DATE" > $LOG_DIR/hash_diff.txt
+ 
+# Recovered Files
+touch $LOG_DIR/recovered_files/secret.pdf touch $LOG_DIR/recovered_files/creds.txt
+
+DASHBOARD_DIR="/var/log/security_analysis/dashboard" OUTPUT_HTML="$DASHBOARD_DIR/index.html" AUTH_LOG="$DASHBOARD_DIR/../reports/auth_logs.txt" FAILED_LOGINS="$DASHBOARD_DIR/../reports/failed_logins.txt" NMAP_SCAN="$DASHBOARD_DIR/../reports/nmap_vuln_scan.txt" NIKTO_SCAN="$DASHBOARD_DIR/../reports/nikto_scan.txt" HASH_DIFF="$DASHBOARD_DIR/../reports/hash_diff.txt" RECOVERED_DIR="$DASHBOARD_DIR/../reports/recovered_files"
+
+mkdir -p "$DASHBOARD_DIR"
+
+# Dummydata for charts malware=35 intrusions=25 anomalies=20 policy=20
+ip_data=$(grep -oP '\d+\.\d+\.\d+\.\d+' "$AUTH_LOG" | sort | uniq -c | sort -nr | head -5) #
+
+HTML Output
+cat <<EOF > "$OUTPUT_HTML"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Security Analysis Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{ font-family: 'Segoe UI', sans-serif; background-color: #0e1621; color: white; padding: 30px; }
+h2 { color: #90cdf4; }
+.container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.box { background: #1a202c; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px #1a202c;
+}
+canvas { background: #0e1621; }
+pre { white-space: pre-wrap; word-wrap: break-word; }
+</style>
+</head>
+<body>
+<h1>Cybersecurity Dashboard</h1>
+<div class="container">
+<div class="box">
+<h2> Authentication Log</h2>
+<pre>$(tail -n 5 "$AUTH_LOG")</pre>
+</div>
+<div class="box">
+<h2>Threats Detected</h2>
+ 
+<canvas id="threatChart"></canvas>
+</div>
+
+
+
+<div class="box">
+<h2>Nmap Scan Report</h2>
+<pre>$(tail -n 5 "$NMAP_SCAN")</pre>
+</div>
+<div class="box">
+<h2>Security Alerts</h2>
+<pre>$(tail -n 5 "$FAILED_LOGINS")</pre>
+</div>
+<div class="box">
+<h2>Traffic Analysis</h2>
+<canvas id="trafficChart"></canvas>
+</div>
+<div class="box">
+<h2>Nikto Scan Report</h2>
+<pre>$(tail -n 5 "$NIKTO_SCAN")</pre>
+</div>
+<div class="box">
+<h2> Memory Analysis Timeline</h2>
+<p><strong>Memory Dump Captured:</strong>
+<code>/var/log/security_analysis/memory_dump.lime</code></p>
+
+<h3>Recovered Files</h3>
+<p><strong>Total Files Recovered:</strong> $(find
+/var/log/security_analysis/reports/recovered_files -type f | wc -l)</p>
+<pre>$(ls /var/log/security_analysis/reports/recovered_files | head -5)</pre>
+
+<h3>File Integrity Summary</h3>
+<ul>
+<li><strong>Total Files Scanned:</strong> $(cat
+/var/log/security_analysis/reports/hash_current.txt | wc -l)</li>
+<li><strong>Changed Files:</strong> $(grep -c '^>'
+/var/log/security_analysis/reports/hash_diff.txt 2>/dev/null)</li>
+</ul>
+<h4>Example Modified Files:</h4>
+<pre>$(grep '^>' /var/log/security_analysis/reports/hash_diff.txt | head -5 | sed 's/^> //')</pre>
+<h4>Timeline of File Count (Simulated)</h4>
+<canvas id="memoryTimelineChart"></canvas>
+<p style="font-size: 0.9em; color: #a0aec0;">
+This timeline shows how the number of files has changed over time. Sudden drops or
+ 
+increase may indicate memory anomalies or system tampering.
+</p>
+</div>
+</div>
+<script>
+const memoryCtx = document.getElementById('memoryTimelineChart').getContext('2d'); new Chart(memoryCtx, {
+type: 'line', data: {
+labels: ['09:00', '10:00', '11:00', '12:00', '13:00'],
+datasets: [{
+label: 'Total Files in Memory',
+data: [1020, 1025, 1001, 1008, 1030], // Simulated timeline fill: false, borderColor: '#38bdf8', tension: 0.1
+}]
+},
+options: { scales: { y: {
+beginAtZero: false,
+title: { display: true, text: 'File Count' }
+},
+x: {
+title: { display: true, text: 'Time (HH:MM)' }
+}
+}
+}
+});
+
+const threatChart = new Chart(document.getElementById('threatChart'), { type: 'pie', data: {
+labels: ['Malware', 'Intrusion Attempts', 'Anomalies', 'Policy Violations'], datasets: [{ data: [$malware, $intrusions, $anomalies, $policy], backgroundColor: ['#4299e1', '#9f7aea', '#f6ad55', '#ed64a6']
+}]
+}
+});
+
+const trafficChart = new Chart(document.getElementById('trafficChart'), { type: 'bar', data: { labels: [
+$(echo "$ip_data" | awk '{print "\""$2"\","}')
+],
+datasets: [{
+label: 'Connections', data: [
+$(echo "$ip_data" | awk '{print $1","}')
+],
+backgroundColor: '#63b3ed'
+}]
+},
+options: {
+scales: { y: { beginAtZero: true } }
+}
+ 
+});
+</script>
+</body>
+</html> EOF
+
+# Auto-open dashboard
+xdg-open "$OUTPUT_HTML" > /dev/null 2>&1 & echo "Dashboard generated at:
+$OUTPUT_HTML"
+
